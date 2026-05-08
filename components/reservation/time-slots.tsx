@@ -9,46 +9,59 @@ interface TimeSlotsProps {
   onToggleSlot: (time: string) => void
 }
 
+const TIME_PERIODS = [
+  { name: 'Madrugada', start: 0, end: 6 },
+  { name: 'Manhã', start: 6, end: 12 },
+  { name: 'Tarde', start: 12, end: 18 },
+  { name: 'Noite', start: 18, end: 24 },
+]
+
 export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps) {
-  // Group slots by hour for visual organization
-  const hourGroups = slots.reduce((acc, slot) => {
-    const hour = slot.time.split(':')[0]
-    if (!acc[hour]) acc[hour] = []
-    acc[hour].push(slot)
-    return acc
-  }, {} as Record<string, TimeSlot[]>)
-  
+  const getSlotsByPeriod = (startHour: number, endHour: number) => {
+    return slots.filter(slot => {
+      const hour = parseInt(slot.time.split(':')[0])
+      return hour >= startHour && hour < endHour
+    })
+  }
+
   return (
-    <div className="space-y-4">
-      {Object.entries(hourGroups).map(([hour, hourSlots]) => (
-        <div key={hour}>
-          <div className="mb-2 text-xs font-medium text-muted-foreground">
-            {hour}:00
+    <div className="space-y-6">
+      {TIME_PERIODS.map(period => {
+        const periodSlots = getSlotsByPeriod(period.start, period.end)
+        if (periodSlots.length === 0) return null
+
+        return (
+          <div key={period.name}>
+            <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+              {period.name}
+            </h3>
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
+              {periodSlots.map((slot) => {
+                const isSelected = selectedSlots.includes(slot.time)
+                
+                return (
+                  <button
+                    key={slot.id}
+                    onClick={() => slot.available && onToggleSlot(slot.time)}
+                    disabled={!slot.available}
+                    className={cn(
+                      'rounded-lg px-2 py-2 text-sm font-medium transition-all duration-200',
+                      'focus:outline-none focus:ring-2 focus:ring-gold/50',
+                      slot.available
+                        ? isSelected
+                          ? 'bg-gold text-charcoal shadow-md'
+                          : 'bg-secondary text-foreground hover:bg-gold/20 hover:text-charcoal'
+                        : 'cursor-not-allowed bg-muted text-muted-foreground line-through opacity-50'
+                    )}
+                  >
+                    {slot.time}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {hourSlots.map((slot) => {
-              const isSelected = selectedSlots.includes(slot.time)
-              
-              return (
-                <button
-                  key={slot.id}
-                  onClick={() => slot.available && onToggleSlot(slot.time)}
-                  disabled={!slot.available}
-                  className={cn(
-                    'rounded-xl py-3 text-sm font-medium transition-all duration-150',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1',
-                    slot.available && isSelected && 'bg-gold text-charcoal shadow-md shadow-gold/20',
-                    slot.available && !isSelected && 'border-2 border-gold/30 bg-background text-foreground hover:border-gold hover:bg-gold/5',
-                    !slot.available && 'cursor-not-allowed bg-muted text-muted-foreground/50 line-through'
-                  )}
-                >
-                  {slot.time}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

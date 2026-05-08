@@ -3,13 +3,13 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Header } from '@/components/layout/header'
 import { ChargerCard } from '@/components/reservation/charger-card'
-import { DaySelector } from '@/components/reservation/day-selector'
+import { DatePicker } from '@/components/reservation/date-picker'
 import { TimeSlots } from '@/components/reservation/time-slots'
 import { ReservationSummary } from '@/components/reservation/reservation-summary'
 import { MyReservations } from '@/components/reservation/my-reservations'
 import { SuccessModal } from '@/components/reservation/success-modal'
 import { ConfirmationModal } from '@/components/reservation/confirmation-modal'
-import { chargers, generateTimeSlots, getNextDays, mockReservations, formatDate } from '@/lib/data'
+import { chargers, generateTimeSlots, mockReservations, formatDate } from '@/lib/data'
 import { useAuth } from '@/contexts/auth-context'
 import type { Charger, Reservation } from '@/lib/types'
 
@@ -33,9 +33,6 @@ export default function HomePage() {
   
   // Reservations state (for demo purposes)
   const [reservations, setReservations] = useState<Reservation[]>(mockReservations)
-  
-  // Generate days for the next 14 days
-  const days = useMemo(() => getNextDays(14), [])
   
   // Generate time slots based on selected charger and date
   const timeSlots = useMemo(() => {
@@ -168,14 +165,13 @@ export default function HomePage() {
           </div>
         </section>
         
-        {/* Day Selector - Only show when charger is selected */}
+        {/* Date Picker - Only show when charger is selected */}
         {selectedCharger && (
           <section className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Selecione o dia
+              Selecione a data
             </h2>
-            <DaySelector
-              days={days}
+            <DatePicker
               selectedDate={selectedDate}
               onSelectDate={handleSelectDate}
             />
