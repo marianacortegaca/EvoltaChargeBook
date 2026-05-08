@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Zap } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
@@ -15,11 +15,15 @@ interface AuthCardProps {
 export function AuthCard({ title, description, children, footer }: AuthCardProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8">
-      <div className="mb-8 flex items-center gap-2">
+      <div className="mb-8 flex items-center gap-2 justify-center">
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-charcoal">
-            <Zap className="h-5 w-5 text-gold" />
-          </div>
+          <Image 
+            src="/logo.png" 
+            alt="Evolta Logo" 
+            width={40} 
+            height={40} 
+            className="rounded-xl"
+          />
           <span className="text-xl font-semibold tracking-tight text-foreground">Evolta</span>
         </Link>
       </div>
