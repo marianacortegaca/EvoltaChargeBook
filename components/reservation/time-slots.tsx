@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -23,6 +24,8 @@ const TIME_PERIODS = [
 ]
 
 export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps) {
+  const [openTooltip, setOpenTooltip] = useState<string | null>(null)
+
   const getSlotsByPeriod = (startHour: number, endHour: number) => {
     return slots.filter(slot => {
       const hour = parseInt(slot.time.split(':')[0])
@@ -30,11 +33,21 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
     })
   }
 
+  const handleSlotClick = (slot: TimeSlot) => {
+    if (slot.available) {
+      onToggleSlot(slot.time)
+    } else if (slot.reservedBy) {
+      // Toggle tooltip on click for mobile devices
+      setOpenTooltip(openTooltip === slot.id ? null : slot.id)
+    }
+  }
+
   const SlotButton = ({ slot, isSelected }: { slot: TimeSlot; isSelected: boolean }) => {
+    const isTooltipOpen = openTooltip === slot.id
+
     const button = (
       <button
-        onClick={() => slot.available && onToggleSlot(slot.time)}
-        disabled={!slot.available}
+        onClick={() => handleSlotClick(slot)}
         className={cn(
           'rounded-lg px-2 py-2 text-sm font-medium transition-all duration-200',
           'focus:outline-none focus:ring-2 focus:ring-gold/50',
@@ -42,7 +55,7 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
             ? isSelected
               ? 'bg-gold text-charcoal shadow-md'
               : 'bg-secondary text-foreground hover:bg-gold/20 hover:text-charcoal'
-            : 'cursor-not-allowed bg-muted text-muted-foreground line-through opacity-50'
+            : 'cursor-pointer bg-muted text-muted-foreground line-through opacity-50'
         )}
       >
         {slot.time}
@@ -52,7 +65,7 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
     // Show tooltip only for reserved (unavailable) slots with reservedBy info
     if (!slot.available && slot.reservedBy) {
       return (
-        <Tooltip>
+        <Tooltip open={isTooltipOpen} onOpenChange={(open) => setOpenTooltip(open ? slot.id : null)}>
           <TooltipTrigger asChild>
             {button}
           </TooltipTrigger>
