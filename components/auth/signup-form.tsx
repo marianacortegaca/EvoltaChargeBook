@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/auth-context'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CheckCircle } from 'lucide-react'
 
 export function SignupForm() {
   const [name, setName] = useState('')
@@ -14,12 +14,14 @@ export function SignupForm() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const { signup, isLoading } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
 
     if (!name || !email || !password || !confirmPassword) {
       setError('Por favor preencha todos os campos')
@@ -34,7 +36,13 @@ export function SignupForm() {
     const result = await signup(email, password, name)
     
     if (result.success) {
-      router.push('/dashboard')
+      if (result.error) {
+        // Email confirmation required
+        setSuccess(result.error)
+      } else {
+        // Auto-login successful
+        router.push('/dashboard')
+      }
     } else {
       setError(result.error || 'Erro ao criar conta')
     }
@@ -96,6 +104,13 @@ export function SignupForm() {
 
       {error && (
         <p className="text-sm text-destructive">{error}</p>
+      )}
+
+      {success && (
+        <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700">
+          <CheckCircle className="h-4 w-4" />
+          <p>{success}</p>
+        </div>
       )}
 
       <Button 

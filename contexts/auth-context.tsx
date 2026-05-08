@@ -84,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase.auth])
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    console.log('[v0] Login attempt:', email)
     setState(prev => ({ ...prev, isLoading: true }))
     
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -91,15 +92,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     })
     
+    console.log('[v0] Login result:', { data, error })
+    
     if (error) {
+      console.log('[v0] Login error:', error.message)
       setState(prev => ({ ...prev, isLoading: false }))
       if (error.message.includes('Invalid login credentials')) {
         return { success: false, error: 'Email ou password incorretos.' }
+      }
+      if (error.message.includes('Email not confirmed')) {
+        return { success: false, error: 'Por favor confirme o seu email antes de fazer login.' }
       }
       return { success: false, error: error.message }
     }
     
     if (data.user) {
+      console.log('[v0] Login success, user:', data.user.email)
       setState({
         user: mapSupabaseUser(data.user),
         isLoading: false,
@@ -111,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase.auth])
 
   const signup = useCallback(async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
+    console.log('[v0] Signup attempt:', email, name)
     setState(prev => ({ ...prev, isLoading: true }))
     
     const { data, error } = await supabase.auth.signUp({
@@ -125,7 +134,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     })
     
+    console.log('[v0] Signup result:', { user: data?.user?.email, session: !!data?.session, error })
+    
     if (error) {
+      console.log('[v0] Signup error:', error.message)
       setState(prev => ({ ...prev, isLoading: false }))
       if (error.message.includes('already registered')) {
         return { success: false, error: 'Este email já está registado.' }
@@ -135,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Check if email confirmation is required
     if (data.user && !data.session) {
+      console.log('[v0] Email confirmation required')
       setState(prev => ({ ...prev, isLoading: false }))
       return { success: true, error: 'Verifique o seu email para confirmar a conta.' }
     }
