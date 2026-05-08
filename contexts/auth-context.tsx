@@ -1,10 +1,20 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import type { User, AuthState } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
-// Mock user storage (replace with Supabase in production)
-const STORAGE_KEY = 'evolta_auth'
+interface User {
+  id: string
+  email: string
+  name: string
+}
+
+interface AuthState {
+  user: User | null
+  isLoading: boolean
+  isAuthenticated: boolean
+}
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
@@ -15,8 +25,13 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Mock users database (replace with Supabase)
-const mockUsers: Map<string, { user: User; password: string }> = new Map()
+function mapSupabaseUser(supabaseUser: SupabaseUser): User {
+  return {
+    id: supabaseUser.id,
+    email: supabaseUser.email || '',
+    name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'Utilizador',
+  }
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
@@ -25,15 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
   })
 
-  // Check for existing session on mount
+  const supabase = createClient()
+
+  // Check for existing session on mount and listen for auth changes
   useEffect(() => {
-    const checkSession = () => {
+    const checkSession = async () => {
       try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-          const user = JSON.parse(stored) as User
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
           setState({
-            user,
+            user: mapSupabaseUser(session.user),
             isLoading: false,
             isAuthenticated: true,
           })
@@ -44,94 +60,120 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState(prev => ({ ...prev, isLoading: false }))
       }
     }
-    
-    // Small delay to simulate async session check
-    const timer = setTimeout(checkSession, 100)
-    return () => clearTimeout(timer)
-  }, [])
+
+    checkSession()
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setState({
+          user: mapSupabaseUser(session.user),
+          isLoading: false,
+          isAuthenticated: true,
+        })
+      } else {
+        setState({
+          user: null,
+          isLoading: false,
+          isAuthenticated: false,
+        })
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setState(prev => ({ ...prev, isLoading: true }))
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    // Check mock database - only allow registered users
-    const userData = mockUsers.get(email.toLowerCase())
-    
-    if (!userData) {
-      setState(prev => ({ ...prev, isLoading: false }))
-      return { success: false, error: 'Email não registado. Por favor, crie uma conta.' }
-    }
-    
-    if (userData.password !== password) {
-      setState(prev => ({ ...prev, isLoading: false }))
-      return { success: false, error: 'Password incorreta.' }
-    }
-    
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData.user))
-    setState({
-      user: userData.user,
-      isLoading: false,
-      isAuthenticated: true,
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.toLowerCase(),
+      password,
     })
+    
+    if (error) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      if (error.message.includes('Invalid login credentials')) {
+        return { success: false, error: 'Email ou password incorretos.' }
+      }
+      return { success: false, error: error.message }
+    }
+    
+    if (data.user) {
+      setState({
+        user: mapSupabaseUser(data.user),
+        isLoading: false,
+        isAuthenticated: true,
+      })
+    }
+    
     return { success: true }
-  }, [])
+  }, [supabase.auth])
 
   const signup = useCallback(async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
     setState(prev => ({ ...prev, isLoading: true }))
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    // Check if user already exists
-    if (mockUsers.has(email.toLowerCase())) {
-      setState(prev => ({ ...prev, isLoading: false }))
-      return { success: false, error: 'Este email já está registado' }
-    }
-    
-    const newUser: User = {
-      id: crypto.randomUUID(),
+    const { data, error } = await supabase.auth.signUp({
       email: email.toLowerCase(),
-      name,
-      createdAt: new Date().toISOString(),
-    }
-    
-    mockUsers.set(email.toLowerCase(), { user: newUser, password })
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser))
-    
-    setState({
-      user: newUser,
-      isLoading: false,
-      isAuthenticated: true,
+      password,
+      options: {
+        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? 
+          `${window.location.origin}/auth/callback`,
+        data: {
+          name,
+        },
+      },
     })
     
+    if (error) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      if (error.message.includes('already registered')) {
+        return { success: false, error: 'Este email já está registado.' }
+      }
+      return { success: false, error: error.message }
+    }
+    
+    // Check if email confirmation is required
+    if (data.user && !data.session) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      return { success: true, error: 'Verifique o seu email para confirmar a conta.' }
+    }
+    
+    if (data.user && data.session) {
+      setState({
+        user: mapSupabaseUser(data.user),
+        isLoading: false,
+        isAuthenticated: true,
+      })
+    }
+    
     return { success: true }
-  }, [])
+  }, [supabase.auth])
 
   const logout = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true }))
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300))
-    
-    localStorage.removeItem(STORAGE_KEY)
+    await supabase.auth.signOut()
     
     setState({
       user: null,
       isLoading: false,
       isAuthenticated: false,
     })
-  }, [])
+  }, [supabase.auth])
 
   const resetPassword = useCallback(async (email: string): Promise<{ success: boolean; error?: string }> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800))
+    const { error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
+      redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? 
+        `${window.location.origin}/auth/callback`,
+    })
     
-    // In production, this would trigger Supabase password reset email
-    // For demo, we just return success
+    if (error) {
+      return { success: false, error: error.message }
+    }
+    
     return { success: true }
-  }, [])
+  }, [supabase.auth])
 
   return (
     <AuthContext.Provider value={{ ...state, login, signup, logout, resetPassword }}>

@@ -9,15 +9,17 @@ import { ReservationSummary } from '@/components/reservation/reservation-summary
 import { MyReservations } from '@/components/reservation/my-reservations'
 import { SuccessModal } from '@/components/reservation/success-modal'
 import { ConfirmationModal } from '@/components/reservation/confirmation-modal'
-import { chargers, generateTimeSlots, mockReservations, formatDate } from '@/lib/data'
+import { chargers, generateTimeSlots, formatDate } from '@/lib/data'
 import { useAuth } from '@/contexts/auth-context'
-import type { Charger, Reservation } from '@/lib/types'
+import { useReservations } from '@/hooks/use-reservations'
+import type { Charger } from '@/lib/types'
 
 const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
 export default function HomePage() {
   const { user } = useAuth()
+  const { reservations, createReservation, getUserReservations } = useReservations()
   
   // Reservation state
   const [selectedCharger, setSelectedCharger] = useState<Charger | null>(null)
@@ -31,8 +33,11 @@ export default function HomePage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [successData, setSuccessData] = useState({ chargerName: '', date: '', time: '' })
   
-  // Reservations state (for demo purposes)
-  const [reservations, setReservations] = useState<Reservation[]>(mockReservations)
+  // Get user's reservations
+  const userReservations = useMemo(() => {
+    if (!user) return []
+    return getUserReservations(user.id)
+  }, [user, getUserReservations])
   
   // Generate time slots based on selected charger, date and existing reservations
   const timeSlots = useMemo(() => {
@@ -93,40 +98,34 @@ export default function HomePage() {
     
     setIsConfirming(true)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const result = await createReservation(
+      user.id,
+      selectedCharger.id,
+      selectedCharger.name,
+      formatDate(selectedDate),
+      selectedSlots,
+      user.name,
+      vehiclePlate
+    )
     
-    // Create new reservation
-    const newReservation: Reservation = {
-      id: `res-${Date.now()}`,
-      userId: user.id,
-      chargerId: selectedCharger.id,
-      chargerName: selectedCharger.name,
-      date: formatDate(selectedDate),
-      slots: selectedSlots,
-      userName: user.name,
-      vehiclePlate,
-      status: 'confirmed',
-      createdAt: new Date().toISOString(),
+    if (result.success) {
+      // Show success modal
+      setSuccessData({
+        chargerName: selectedCharger.name,
+        date: `${dayNames[selectedDate.getDay()]}, ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]}`,
+        time: getTimeRange(selectedSlots),
+      })
+      
+      setShowConfirmation(false)
+      setShowSuccess(true)
+      
+      // Reset selection
+      setSelectedCharger(null)
+      setSelectedSlots([])
     }
     
-    setReservations(prev => [newReservation, ...prev])
-    
-    // Show success modal
-    setSuccessData({
-      chargerName: selectedCharger.name,
-      date: `${dayNames[selectedDate.getDay()]}, ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]}`,
-      time: getTimeRange(selectedSlots),
-    })
-    
     setIsConfirming(false)
-    setShowConfirmation(false)
-    setShowSuccess(true)
-    
-    // Reset selection
-    setSelectedCharger(null)
-    setSelectedSlots([])
-  }, [selectedCharger, selectedDate, selectedSlots, getTimeRange, user])
+  }, [selectedCharger, selectedDate, selectedSlots, getTimeRange, user, createReservation])
   
   // Handle success modal close
   const handleSuccessClose = useCallback(() => {
@@ -231,7 +230,7 @@ export default function HomePage() {
       
       {/* My Reservations Modal */}
       <MyReservations
-        reservations={reservations}
+        reservations={userReservations}
         isOpen={showReservations}
         onClose={() => setShowReservations(false)}
       />
