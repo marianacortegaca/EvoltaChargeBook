@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Reservation } from '@/lib/types'
 
@@ -37,7 +37,8 @@ export function useReservations() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
-  const supabase = createClient()
+  // Create a stable supabase client
+  const supabase = useMemo(() => createClient(), [])
 
   // Fetch all reservations
   const fetchReservations = useCallback(async () => {
