@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { LogOut, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
+import { useLanguage } from '@/contexts/language-context'
+import { LanguageToggle } from '@/components/layout/language-toggle'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +21,7 @@ interface HeaderProps {
 
 export function Header({ onShowReservations }: HeaderProps) {
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -41,12 +44,14 @@ export function Header({ onShowReservations }: HeaderProps) {
         </div>
         
         <div className="flex items-center gap-2">
+          <LanguageToggle />
+          
           <Button 
             variant="ghost" 
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
             onClick={onShowReservations}
           >
-            As minhas reservas
+            {t('myReservations')}
           </Button>
 
           <DropdownMenu>
@@ -65,7 +70,7 @@ export function Header({ onShowReservations }: HeaderProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
-                Terminar sessão
+                {t('logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

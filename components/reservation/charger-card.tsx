@@ -2,6 +2,7 @@
 
 import { Zap, BatteryCharging } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/language-context'
 import type { Charger } from '@/lib/types'
 
 interface ChargerCardProps {
@@ -11,6 +12,7 @@ interface ChargerCardProps {
 }
 
 export function ChargerCard({ charger, selected, onSelect }: ChargerCardProps) {
+  const { t } = useLanguage()
   const isFull = charger.availableSlots === 0
   
   return (
@@ -62,7 +64,7 @@ export function ChargerCard({ charger, selected, onSelect }: ChargerCardProps) {
               ? 'bg-gold/20 text-gold-dark'
               : 'bg-gray-light text-muted-foreground'
         )}>
-          {isFull ? 'Cheio' : `${charger.availableSlots} disponíveis`}
+          {isFull ? t('full') : `${charger.availableSlots} ${t('availableSlots')}`}
         </div>
       </div>
       

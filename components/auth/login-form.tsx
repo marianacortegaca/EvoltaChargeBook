@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/auth-context'
+import { useLanguage } from '@/contexts/language-context'
 import { Loader2 } from 'lucide-react'
 
 export function LoginForm() {
@@ -14,6 +15,7 @@ export function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const { login, isLoading } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,7 +23,7 @@ export function LoginForm() {
     setError('')
 
     if (!email || !password) {
-      setError('Por favor preencha todos os campos')
+      setError(t('fillAllFields') as string)
       return
     }
 
@@ -30,14 +32,14 @@ export function LoginForm() {
     if (result.success) {
       router.push('/dashboard')
     } else {
-      setError(result.error || 'Erro ao fazer login')
+      setError(result.error || t('errorGeneric') as string)
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('email')}</Label>
         <Input
           id="email"
           type="email"
@@ -51,12 +53,12 @@ export function LoginForm() {
       
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Palavra-passe</Label>
+          <Label htmlFor="password">{t('password')}</Label>
           <Link 
             href="/forgot-password" 
             className="text-sm text-gold hover:text-gold-dark transition-colors"
           >
-            Esqueceu-se?
+            {t('forgotPassword')}
           </Link>
         </div>
         <Input
@@ -82,10 +84,10 @@ export function LoginForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            A entrar...
+            {t('loggingIn')}
           </>
         ) : (
-          'Entrar'
+          t('login')
         )}
       </Button>
     </form>

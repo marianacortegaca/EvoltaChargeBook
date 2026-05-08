@@ -1,0 +1,199 @@
+export const translations = {
+  pt: {
+    // Header
+    myReservations: 'Minhas Reservas',
+    logout: 'Terminar Sessão',
+    
+    // Hero
+    heroTitle: 'Reserve o seu carregamento',
+    heroDescription: 'Escolha o carregador, dia e hora.',
+    
+    // Auth
+    login: 'Entrar',
+    signup: 'Criar Conta',
+    forgotPassword: 'Esqueceu a password?',
+    email: 'Email',
+    password: 'Password',
+    confirmPassword: 'Confirmar Password',
+    name: 'Nome',
+    loginTitle: 'Bem-vindo de volta',
+    loginDescription: 'Entre na sua conta para fazer reservas',
+    signupTitle: 'Criar uma conta',
+    signupDescription: 'Registe-se para começar a reservar',
+    forgotPasswordTitle: 'Recuperar password',
+    forgotPasswordDescription: 'Introduza o seu email para receber instruções',
+    sendRecoveryEmail: 'Enviar email de recuperação',
+    backToLogin: 'Voltar ao login',
+    noAccount: 'Não tem conta?',
+    hasAccount: 'Já tem conta?',
+    createAccount: 'Criar conta',
+    fillAllFields: 'Por favor preencha todos os campos',
+    passwordsDoNotMatch: 'As palavras-passe não coincidem',
+    emailSent: 'Email enviado! Verifique a sua caixa de entrada.',
+    loggingIn: 'A entrar...',
+    creatingAccount: 'A criar conta...',
+    
+    // Dashboard
+    selectCharger: 'Selecione o carregador',
+    selectDate: 'Selecione a data',
+    selectTimeSlots: 'Selecione os horários',
+    available: 'Disponível',
+    availableSlots: 'disponíveis',
+    unavailable: 'Indisponível',
+    full: 'Cheio',
+    
+    // Time periods
+    dawn: 'Madrugada',
+    morning: 'Manhã',
+    afternoon: 'Tarde',
+    evening: 'Noite',
+    
+    // Reservation
+    reservationSummary: 'Resumo da Reserva',
+    charger: 'Carregador',
+    date: 'Data',
+    time: 'Horário',
+    duration: 'Duração',
+    minutes: 'minutos',
+    confirmReservation: 'Confirmar Reserva',
+    selectSlotsFirst: 'Selecione horários primeiro',
+    
+    // Confirmation Modal
+    confirmReservationTitle: 'Confirmar Reserva',
+    vehiclePlate: 'Matrícula do Veículo',
+    vehiclePlatePlaceholder: 'Ex: 00-AA-00',
+    yourName: 'Seu Nome',
+    cancel: 'Cancelar',
+    confirm: 'Confirmar',
+    
+    // Success Modal
+    reservationConfirmed: 'Reserva Confirmada!',
+    reservationSuccess: 'A sua reserva foi confirmada com sucesso.',
+    close: 'Fechar',
+    
+    // My Reservations
+    myReservationsTitle: 'Minhas Reservas',
+    noReservations: 'Sem reservas',
+    noReservationsDescription: 'Ainda não tem reservas. Selecione um carregador e horário para começar.',
+    confirmed: 'Confirmada',
+    pending: 'Pendente',
+    cancelled: 'Cancelada',
+    deleteReservation: 'Eliminar Reserva',
+    deleteConfirmation: 'Tem a certeza que deseja eliminar esta reserva?',
+    
+    // Tooltip
+    reservedBy: 'Reservado por',
+    
+    // Months
+    months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+    
+    // Days
+    days: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+    
+    // Errors
+    errorLogin: 'Email ou password incorretos.',
+    errorEmailNotConfirmed: 'Por favor confirme o seu email antes de fazer login.',
+    errorEmailRegistered: 'Este email já está registado.',
+    errorGeneric: 'Ocorreu um erro. Tente novamente.',
+  },
+  en: {
+    // Header
+    myReservations: 'My Reservations',
+    logout: 'Logout',
+    
+    // Hero
+    heroTitle: 'Book your charging',
+    heroDescription: 'Choose the charger, day and time.',
+    
+    // Auth
+    login: 'Login',
+    signup: 'Sign Up',
+    forgotPassword: 'Forgot password?',
+    email: 'Email',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    name: 'Name',
+    loginTitle: 'Welcome back',
+    loginDescription: 'Sign in to your account to make reservations',
+    signupTitle: 'Create an account',
+    signupDescription: 'Register to start booking',
+    forgotPasswordTitle: 'Reset password',
+    forgotPasswordDescription: 'Enter your email to receive instructions',
+    sendRecoveryEmail: 'Send recovery email',
+    backToLogin: 'Back to login',
+    noAccount: "Don't have an account?",
+    hasAccount: 'Already have an account?',
+    createAccount: 'Create account',
+    fillAllFields: 'Please fill in all fields',
+    passwordsDoNotMatch: 'Passwords do not match',
+    emailSent: 'Email sent! Check your inbox.',
+    loggingIn: 'Logging in...',
+    creatingAccount: 'Creating account...',
+    
+    // Dashboard
+    selectCharger: 'Select charger',
+    selectDate: 'Select date',
+    selectTimeSlots: 'Select time slots',
+    available: 'Available',
+    availableSlots: 'available',
+    unavailable: 'Unavailable',
+    full: 'Full',
+    
+    // Time periods
+    dawn: 'Dawn',
+    morning: 'Morning',
+    afternoon: 'Afternoon',
+    evening: 'Evening',
+    
+    // Reservation
+    reservationSummary: 'Reservation Summary',
+    charger: 'Charger',
+    date: 'Date',
+    time: 'Time',
+    duration: 'Duration',
+    minutes: 'minutes',
+    confirmReservation: 'Confirm Reservation',
+    selectSlotsFirst: 'Select time slots first',
+    
+    // Confirmation Modal
+    confirmReservationTitle: 'Confirm Reservation',
+    vehiclePlate: 'Vehicle Plate',
+    vehiclePlatePlaceholder: 'Ex: ABC-1234',
+    yourName: 'Your Name',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    
+    // Success Modal
+    reservationConfirmed: 'Reservation Confirmed!',
+    reservationSuccess: 'Your reservation has been confirmed successfully.',
+    close: 'Close',
+    
+    // My Reservations
+    myReservationsTitle: 'My Reservations',
+    noReservations: 'No reservations',
+    noReservationsDescription: "You don't have any reservations yet. Select a charger and time slot to get started.",
+    confirmed: 'Confirmed',
+    pending: 'Pending',
+    cancelled: 'Cancelled',
+    deleteReservation: 'Delete Reservation',
+    deleteConfirmation: 'Are you sure you want to delete this reservation?',
+    
+    // Tooltip
+    reservedBy: 'Reserved by',
+    
+    // Months
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    
+    // Days
+    days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    
+    // Errors
+    errorLogin: 'Invalid email or password.',
+    errorEmailNotConfirmed: 'Please confirm your email before logging in.',
+    errorEmailRegistered: 'This email is already registered.',
+    errorGeneric: 'An error occurred. Please try again.',
+  },
+} as const
+
+export type Language = keyof typeof translations
+export type TranslationKey = keyof typeof translations.pt

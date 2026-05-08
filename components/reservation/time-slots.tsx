@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/language-context'
 import {
   Tooltip,
   TooltipContent,
@@ -16,14 +17,15 @@ interface TimeSlotsProps {
   onToggleSlot: (time: string) => void
 }
 
-const TIME_PERIODS = [
-  { name: 'Madrugada', start: 0, end: 6 },
-  { name: 'Manhã', start: 6, end: 12 },
-  { name: 'Tarde', start: 12, end: 18 },
-  { name: 'Noite', start: 18, end: 24 },
-]
+const TIME_PERIOD_KEYS = [
+  { key: 'dawn', start: 0, end: 6 },
+  { key: 'morning', start: 6, end: 12 },
+  { key: 'afternoon', start: 12, end: 18 },
+  { key: 'evening', start: 18, end: 24 },
+] as const
 
 export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps) {
+  const { t } = useLanguage()
   const [openTooltip, setOpenTooltip] = useState<string | null>(null)
 
   const getSlotsByPeriod = (startHour: number, endHour: number) => {
@@ -70,7 +72,7 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
             {button}
           </TooltipTrigger>
           <TooltipContent>
-            <p>Reservado por: {slot.reservedBy}</p>
+            <p>{t('reservedBy')}: {slot.reservedBy}</p>
           </TooltipContent>
         </Tooltip>
       )
@@ -82,14 +84,14 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        {TIME_PERIODS.map(period => {
+        {TIME_PERIOD_KEYS.map(period => {
           const periodSlots = getSlotsByPeriod(period.start, period.end)
           if (periodSlots.length === 0) return null
 
           return (
-            <div key={period.name}>
+            <div key={period.key}>
               <h3 className="mb-3 text-sm font-medium text-muted-foreground">
-                {period.name}
+                {t(period.key)}
               </h3>
               <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
                 {periodSlots.map((slot) => (

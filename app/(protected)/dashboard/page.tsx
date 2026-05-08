@@ -11,15 +11,14 @@ import { SuccessModal } from '@/components/reservation/success-modal'
 import { ConfirmationModal } from '@/components/reservation/confirmation-modal'
 import { chargers, generateTimeSlots, formatDate } from '@/lib/data'
 import { useAuth } from '@/contexts/auth-context'
-import { useReservations } from '@/hooks/use-reservations'
+import { useLanguage } from '@/contexts/language-context'
+import { useReservations, isSuperUser } from '@/hooks/use-reservations'
 import type { Charger } from '@/lib/types'
-
-const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
-const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
 export default function HomePage() {
   const { user } = useAuth()
-  const { reservations, createReservation, getUserReservations } = useReservations()
+  const { t } = useLanguage()
+  const { reservations, createReservation, deleteReservation, getUserReservations } = useReservations()
   
   // Reservation state
   const [selectedCharger, setSelectedCharger] = useState<Charger | null>(null)
@@ -33,11 +32,16 @@ export default function HomePage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [successData, setSuccessData] = useState({ chargerName: '', date: '', time: '' })
   
-  // Get user's reservations
+  // Get user's reservations (super user sees all, regular users see only their own)
   const userReservations = useMemo(() => {
     if (!user) return []
+    // Super user sees all reservations
+    if (isSuperUser(user.email)) {
+      return reservations
+    }
+    // Regular users see only their own
     return getUserReservations(user.id)
-  }, [user, getUserReservations])
+  }, [user, reservations, getUserReservations])
   
   // Generate time slots based on selected charger, date and existing reservations
   const timeSlots = useMemo(() => {
@@ -110,9 +114,11 @@ export default function HomePage() {
     
     if (result.success) {
       // Show success modal
+      const days = t('days') as string[]
+      const months = t('months') as string[]
       setSuccessData({
         chargerName: selectedCharger.name,
-        date: `${dayNames[selectedDate.getDay()]}, ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]}`,
+        date: `${days[selectedDate.getDay()]}, ${selectedDate.getDate()} ${months[selectedDate.getMonth()]}`,
         time: getTimeRange(selectedSlots),
       })
       
@@ -140,17 +146,17 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="mb-10 text-center">
           <h1 className="mb-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Reserve o seu carregamento
+            {t('heroTitle')}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Escolha o carregador, dia e hora.
+            {t('heroDescription')}
           </p>
         </section>
         
         {/* Charger Selection */}
         <section className="mb-8">
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            Selecione o carregador
+            {t('selectCharger')}
           </h2>
           <div className="grid gap-3 md:grid-cols-2">
             {chargers.map(charger => (
@@ -168,7 +174,7 @@ export default function HomePage() {
         {selectedCharger && (
           <section className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Selecione a data
+              {t('selectDate')}
             </h2>
             <DatePicker
               selectedDate={selectedDate}
@@ -181,7 +187,7 @@ export default function HomePage() {
         {selectedCharger && (
           <section className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Selecione a hora
+              {t('selectTimeSlots')}
             </h2>
             <TimeSlots
               slots={timeSlots}
@@ -231,8 +237,11 @@ export default function HomePage() {
       {/* My Reservations Modal */}
       <MyReservations
         reservations={userReservations}
+        currentUserId={user?.id || ''}
+        currentUserEmail={user?.email || ''}
         isOpen={showReservations}
         onClose={() => setShowReservations(false)}
+        onDelete={deleteReservation}
       />
       
       {/* Success Modal */}

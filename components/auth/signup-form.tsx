@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/auth-context'
+import { useLanguage } from '@/contexts/language-context'
 import { Loader2, CheckCircle } from 'lucide-react'
 
 export function SignupForm() {
@@ -16,6 +17,7 @@ export function SignupForm() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const { signup, isLoading } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,12 +26,12 @@ export function SignupForm() {
     setSuccess('')
 
     if (!name || !email || !password || !confirmPassword) {
-      setError('Por favor preencha todos os campos')
+      setError(t('fillAllFields') as string)
       return
     }
 
     if (password !== confirmPassword) {
-      setError('As palavras-passe não coincidem')
+      setError(t('passwordsDoNotMatch') as string)
       return
     }
 
@@ -44,18 +46,18 @@ export function SignupForm() {
         router.push('/dashboard')
       }
     } else {
-      setError(result.error || 'Erro ao criar conta')
+      setError(result.error || t('errorGeneric') as string)
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Nome</Label>
+        <Label htmlFor="name">{t('name')}</Label>
         <Input
           id="name"
           type="text"
-          placeholder="O seu nome"
+          placeholder={t('yourName') as string}
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={isLoading}
@@ -64,7 +66,7 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('email')}</Label>
         <Input
           id="email"
           type="email"
@@ -77,7 +79,7 @@ export function SignupForm() {
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="password">Palavra-passe</Label>
+        <Label htmlFor="password">{t('password')}</Label>
         <Input
           id="password"
           type="password"
@@ -90,7 +92,7 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar palavra-passe</Label>
+        <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -121,10 +123,10 @@ export function SignupForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            A criar conta...
+            {t('creatingAccount')}
           </>
         ) : (
-          'Criar Conta'
+          t('createAccount')
         )}
       </Button>
     </form>

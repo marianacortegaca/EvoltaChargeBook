@@ -96,7 +96,7 @@ export function useReservations() {
     return { success: true, reservation: newReservation }
   }, [supabase])
 
-  // Cancel a reservation
+  // Cancel a reservation (soft delete - marks as cancelled)
   const cancelReservation = useCallback(async (reservationId: string): Promise<{ success: boolean; error?: string }> => {
     const { error: updateError } = await supabase
       .from('reservations')
@@ -105,6 +105,22 @@ export function useReservations() {
     
     if (updateError) {
       return { success: false, error: updateError.message }
+    }
+    
+    setReservations(prev => prev.filter(r => r.id !== reservationId))
+    
+    return { success: true }
+  }, [supabase])
+
+  // Delete a reservation (hard delete - removes from database)
+  const deleteReservation = useCallback(async (reservationId: string): Promise<{ success: boolean; error?: string }> => {
+    const { error: deleteError } = await supabase
+      .from('reservations')
+      .delete()
+      .eq('id', reservationId)
+    
+    if (deleteError) {
+      return { success: false, error: deleteError.message }
     }
     
     setReservations(prev => prev.filter(r => r.id !== reservationId))
@@ -151,7 +167,15 @@ export function useReservations() {
     error,
     createReservation,
     cancelReservation,
+    deleteReservation,
     getUserReservations,
     refetch: fetchReservations,
   }
+}
+
+// Super user email - has full access to all reservations
+export const SUPER_USER_EMAIL = 'geral@evolta.pt'
+
+export function isSuperUser(email: string | undefined): boolean {
+  return email?.toLowerCase() === SUPER_USER_EMAIL.toLowerCase()
 }
