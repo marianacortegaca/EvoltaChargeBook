@@ -34,11 +34,11 @@ export default function HomePage() {
   // Reservations state (for demo purposes)
   const [reservations, setReservations] = useState<Reservation[]>(mockReservations)
   
-  // Generate time slots based on selected charger and date
+  // Generate time slots based on selected charger, date and existing reservations
   const timeSlots = useMemo(() => {
     if (!selectedCharger) return []
-    return generateTimeSlots(selectedCharger.id, formatDate(selectedDate))
-  }, [selectedCharger, selectedDate])
+    return generateTimeSlots(selectedCharger.id, formatDate(selectedDate), reservations)
+  }, [selectedCharger, selectedDate, reservations])
   
   // Handle charger selection
   const handleSelectCharger = useCallback((charger: Charger) => {

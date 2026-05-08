@@ -56,37 +56,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 800))
     
-    // Check mock database
+    // Check mock database - only allow registered users
     const userData = mockUsers.get(email.toLowerCase())
     
-    if (userData && userData.password === password) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData.user))
-      setState({
-        user: userData.user,
-        isLoading: false,
-        isAuthenticated: true,
-      })
-      return { success: true }
+    if (!userData) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      return { success: false, error: 'Email não registado. Por favor, crie uma conta.' }
     }
     
-    // For demo: allow any email/password combination to create a session
-    // In production, this would validate against Supabase
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      email: email.toLowerCase(),
-      name: email.split('@')[0],
-      createdAt: new Date().toISOString(),
+    if (userData.password !== password) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      return { success: false, error: 'Password incorreta.' }
     }
     
-    mockUsers.set(email.toLowerCase(), { user: newUser, password })
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser))
-    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData.user))
     setState({
-      user: newUser,
+      user: userData.user,
       isLoading: false,
       isAuthenticated: true,
     })
-    
     return { success: true }
   }, [])
 

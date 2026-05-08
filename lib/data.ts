@@ -20,19 +20,38 @@ export const chargers: Charger[] = [
 ]
 
 // Generate time slots from 00:00 to 23:45 in 15-minute intervals
-export function generateTimeSlots(chargerId: string, date: string): TimeSlot[] {
+// Checks against existing reservations to mark slots as unavailable
+export function generateTimeSlots(chargerId: string, date: string, reservations: Reservation[] = []): TimeSlot[] {
   const slots: TimeSlot[] = []
+  
+  // Find all reservations for this charger and date
+  const dayReservations = (reservations || []).filter(
+    res => res.chargerId === chargerId && res.date === date && res.status !== 'cancelled'
+  )
+  
+  // Create a map of reserved slots with user info
+  const reservedSlots = new Map<string, { userName: string; vehiclePlate: string }>()
+  dayReservations.forEach(res => {
+    res.slots.forEach(slot => {
+      reservedSlots.set(slot, {
+        userName: res.userName || 'Utilizador',
+        vehiclePlate: res.vehiclePlate || '',
+      })
+    })
+  })
   
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       const slotId = `${chargerId}-${date}-${time}`
+      const reservedInfo = reservedSlots.get(time)
       
       slots.push({
         id: slotId,
         time,
-        available: true, // All slots available - will be managed by database in production
+        available: !reservedInfo,
         chargerId,
+        reservedBy: reservedInfo ? `${reservedInfo.userName} (${reservedInfo.vehiclePlate})` : undefined,
       })
     }
   }

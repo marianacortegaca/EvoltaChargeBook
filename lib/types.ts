@@ -27,6 +27,7 @@ export interface TimeSlot {
   time: string
   available: boolean
   chargerId?: string
+  reservedBy?: string // Name of the person who reserved this slot
 }
 
 export interface Reservation {
