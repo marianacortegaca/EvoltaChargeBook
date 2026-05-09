@@ -19,12 +19,12 @@ export function AuthCard({ title, description, children, footer }: AuthCardProps
         <Link href="/" className="flex items-center gap-2">
           <Image 
             src="/logo.png" 
-            alt="Evolta Logo" 
+            alt="EVOLTA Logo" 
             width={40} 
             height={40} 
             className="rounded-xl"
           />
-          <span className="text-xl font-semibold tracking-tight text-foreground">Evolta</span>
+          <span className="text-xl font-semibold tracking-tight text-foreground">EVOLTA</span>
         </Link>
       </div>
       

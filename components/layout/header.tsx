@@ -35,12 +35,12 @@ export function Header({ onShowReservations }: HeaderProps) {
         <div className="flex items-center gap-2">
           <Image 
             src="/logo.png" 
-            alt="Evolta Logo" 
+            alt="EVOLTA Logo" 
             width={36} 
             height={36} 
             className="rounded-lg"
           />
-          <span className="text-xl font-semibold tracking-tight text-charcoal">Evolta</span>
+          <span className="text-xl font-semibold tracking-tight text-charcoal">EVOLTA</span>
         </div>
         
         <div className="flex items-center gap-2">
