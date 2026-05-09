@@ -18,7 +18,7 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  signup: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string }>
+  signup: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string; needsEmailConfirmation?: boolean }>
   logout: () => Promise<void>
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>
 }
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { success: true }
   }, [supabase.auth])
 
-  const signup = useCallback(async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
+  const signup = useCallback(async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string; needsEmailConfirmation?: boolean }> => {
     setState(prev => ({ ...prev, isLoading: true }))
     
     const { data, error } = await supabase.auth.signUp({
@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if email confirmation is required
     if (data.user && !data.session) {
       setState(prev => ({ ...prev, isLoading: false }))
-      return { success: true, error: 'Verifique o seu email para confirmar a conta.' }
+      return { success: true, needsEmailConfirmation: true }
     }
     
     if (data.user && data.session) {

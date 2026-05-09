@@ -38,7 +38,7 @@ export function SignupForm() {
     const result = await signup(email, password, name)
     
     if (result.success) {
-      if (result.error) {
+      if (result.needsEmailConfirmation) {
         // Email confirmation required - show confirmation screen
         setShowEmailConfirmation(true)
       } else {
