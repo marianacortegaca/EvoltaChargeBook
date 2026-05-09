@@ -8,6 +8,15 @@ export const translations = {
     heroTitle: 'Indique a sua intenção de carregamento',
     heroDescription: 'ATENÇÃO: O registo de intenção ajuda a prever os horários de maior utilização, mas não garante a reserva da slot.',
     
+    // Locations
+    selectLocation: 'Selecione a localização',
+    comingSoon: 'Disponível em breve',
+    location: 'Localização',
+    
+    // Slot capacity
+    slotsAvailable: 'vagas',
+    plannedBy: 'Planeado por',
+    
     // Auth
     login: 'Entrar',
     signup: 'Criar Conta',
@@ -32,6 +41,10 @@ export const translations = {
     emailSent: 'Email enviado! Verifique a sua caixa de entrada.',
     loggingIn: 'A entrar...',
     creatingAccount: 'A criar conta...',
+    verifyEmailTitle: 'Verifique o seu email',
+    verifyEmailDescription: 'Enviámos um link de confirmação para o seu endereço de email.',
+    emailSentTo: 'Email enviado para:',
+    verifyEmailInstructions: 'Por favor verifique a sua caixa de entrada e clique no link de confirmação para ativar a sua conta. Depois pode iniciar sessão.',
     
     // Dashboard
     selectCharger: 'Selecione a localização',
@@ -40,7 +53,7 @@ export const translations = {
     available: 'Disponível',
     availableSlots: 'disponíveis',
     unavailable: 'Indisponível',
-    full: 'Completo',
+    full: 'Indisponível',
     
     // Time periods
     dawn: 'Madrugada',
@@ -72,7 +85,7 @@ export const translations = {
     close: 'Fechar',
     
     // My Reservations
-    myReservationsTitle: 'Minhas Marcações ',
+    myReservationsTitle: 'Minhas Marcações',
     noReservations: 'Sem planeamentos',
     noReservationsDescription: 'Ainda não tem marcações planeadas. Selecione uma localização, data e horário para começar.',
     confirmed: 'Confirmada',
@@ -105,6 +118,15 @@ export const translations = {
     heroTitle: 'Book your intention to charge.',
     heroDescription: 'ATTENTION: Registering an intention helps predict peak usage periods, but does not guarantee slot reservation.',
     
+    // Locations
+    selectLocation: 'Select location',
+    comingSoon: 'Coming soon',
+    location: 'Location',
+    
+    // Slot capacity
+    slotsAvailable: 'slots',
+    plannedBy: 'Planned by',
+    
     // Auth
     login: 'Login',
     signup: 'Sign Up',
@@ -129,6 +151,10 @@ export const translations = {
     emailSent: 'Email sent! Check your inbox.',
     loggingIn: 'Logging in...',
     creatingAccount: 'Creating account...',
+    verifyEmailTitle: 'Verify your email',
+    verifyEmailDescription: 'We sent a confirmation link to your email address.',
+    emailSentTo: 'Email sent to:',
+    verifyEmailInstructions: 'Please check your inbox and click the confirmation link to activate your account. Then you can sign in.',
     
     // Dashboard
     selectCharger: 'Select charger',
@@ -137,7 +163,7 @@ export const translations = {
     available: 'Available',
     availableSlots: 'available',
     unavailable: 'Unavailable',
-    full: 'Full',
+    full: 'Unavailable',
     
     // Time periods
     dawn: 'Dawn',

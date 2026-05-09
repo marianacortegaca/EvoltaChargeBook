@@ -12,29 +12,33 @@ export interface AuthState {
   isAuthenticated: boolean
 }
 
-// Charger types
-export interface Charger {
+// Location types
+export interface Location {
   id: string
   name: string
-  type: 'ultra-fast' | 'fast'
-  power: number
-  availableSlots: number
-  totalSlots: number
+  city: string
+  available: boolean
+  comingSoon?: boolean
 }
+
+// Slot capacity configuration
+export const SLOT_MAX_CAPACITY = 3
 
 export interface TimeSlot {
   id: string
   time: string
   available: boolean
-  chargerId?: string
-  reservedBy?: string // Name of the person who reserved this slot
+  locationId?: string
+  currentReservations: number // Number of current reservations (0-3)
+  maxCapacity: number // Maximum capacity (3)
+  reservations: Array<{ userName: string; vehiclePlate: string }> // List of all reservations for this slot
 }
 
 export interface Reservation {
   id: string
   userId: string
-  chargerId: string
-  chargerName: string
+  locationId: string
+  locationName: string
   date: string
   slots: string[]
   userName?: string

@@ -2,18 +2,18 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { Header } from '@/components/layout/header'
-import { ChargerCard } from '@/components/reservation/charger-card'
+import { LocationCard } from '@/components/reservation/location-card'
 import { DatePicker } from '@/components/reservation/date-picker'
 import { TimeSlots } from '@/components/reservation/time-slots'
 import { ReservationSummary } from '@/components/reservation/reservation-summary'
 import { MyReservations } from '@/components/reservation/my-reservations'
 import { SuccessModal } from '@/components/reservation/success-modal'
 import { ConfirmationModal } from '@/components/reservation/confirmation-modal'
-import { chargers, generateTimeSlots, formatDate } from '@/lib/data'
+import { locations, generateTimeSlots, formatDate } from '@/lib/data'
 import { useAuth } from '@/contexts/auth-context'
 import { useLanguage } from '@/contexts/language-context'
 import { useReservations, isSuperUser } from '@/hooks/use-reservations'
-import type { Charger } from '@/lib/types'
+import type { Location } from '@/lib/types'
 
 export default function HomePage() {
   const { user } = useAuth()
@@ -21,7 +21,7 @@ export default function HomePage() {
   const { reservations, createReservation, deleteReservation, getUserReservations } = useReservations()
   
   // Reservation state
-  const [selectedCharger, setSelectedCharger] = useState<Charger | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedSlots, setSelectedSlots] = useState<string[]>([])
   const [isConfirming, setIsConfirming] = useState(false)
@@ -30,7 +30,7 @@ export default function HomePage() {
   const [showReservations, setShowReservations] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
-  const [successData, setSuccessData] = useState({ chargerName: '', date: '', time: '' })
+  const [successData, setSuccessData] = useState({ locationName: '', date: '', time: '' })
   
   // Get user's reservations (super user sees all, regular users see only their own)
   const userReservations = useMemo(() => {
@@ -43,22 +43,24 @@ export default function HomePage() {
     return getUserReservations(user.id)
   }, [user, reservations, getUserReservations])
   
-  // Generate time slots based on selected charger, date and existing reservations
+  // Generate time slots based on selected location, date and existing reservations
   const timeSlots = useMemo(() => {
-    if (!selectedCharger) return []
-    return generateTimeSlots(selectedCharger.id, formatDate(selectedDate), reservations)
-  }, [selectedCharger, selectedDate, reservations])
+    if (!selectedLocation) return []
+    return generateTimeSlots(selectedLocation.id, formatDate(selectedDate), reservations)
+  }, [selectedLocation, selectedDate, reservations])
   
-  // Handle charger selection
-  const handleSelectCharger = useCallback((charger: Charger) => {
-    if (selectedCharger?.id === charger.id) {
-      setSelectedCharger(null)
+  // Handle location selection
+  const handleSelectLocation = useCallback((location: Location) => {
+    if (!location.available) return
+    
+    if (selectedLocation?.id === location.id) {
+      setSelectedLocation(null)
       setSelectedSlots([])
     } else {
-      setSelectedCharger(charger)
+      setSelectedLocation(location)
       setSelectedSlots([])
     }
-  }, [selectedCharger])
+  }, [selectedLocation])
   
   // Handle date selection
   const handleSelectDate = useCallback((date: Date) => {
@@ -91,21 +93,23 @@ export default function HomePage() {
 
   // Open confirmation modal
   const handleOpenConfirmation = useCallback(() => {
-    if (selectedCharger && selectedSlots.length > 0) {
+    if (selectedLocation && selectedSlots.length > 0) {
       setShowConfirmation(true)
     }
-  }, [selectedCharger, selectedSlots])
+  }, [selectedLocation, selectedSlots])
   
   // Handle final reservation confirmation with vehicle plate
   const handleConfirm = useCallback(async (vehiclePlate: string) => {
-    if (!selectedCharger || selectedSlots.length === 0 || !user) return
+    if (!selectedLocation || selectedSlots.length === 0 || !user) return
     
     setIsConfirming(true)
     
+    const locationDisplayName = `${selectedLocation.city} | ${selectedLocation.name}`
+    
     const result = await createReservation(
       user.id,
-      selectedCharger.id,
-      selectedCharger.name,
+      selectedLocation.id,
+      locationDisplayName,
       formatDate(selectedDate),
       selectedSlots,
       user.name,
@@ -117,7 +121,7 @@ export default function HomePage() {
       const days = t('days') as string[]
       const months = t('months') as string[]
       setSuccessData({
-        chargerName: selectedCharger.name,
+        locationName: locationDisplayName,
         date: `${days[selectedDate.getDay()]}, ${selectedDate.getDate()} ${months[selectedDate.getMonth()]}`,
         time: getTimeRange(selectedSlots),
       })
@@ -126,12 +130,12 @@ export default function HomePage() {
       setShowSuccess(true)
       
       // Reset selection
-      setSelectedCharger(null)
+      setSelectedLocation(null)
       setSelectedSlots([])
     }
     
     setIsConfirming(false)
-  }, [selectedCharger, selectedDate, selectedSlots, getTimeRange, user, createReservation])
+  }, [selectedLocation, selectedDate, selectedSlots, getTimeRange, user, createReservation, t])
   
   // Handle success modal close
   const handleSuccessClose = useCallback(() => {
@@ -153,25 +157,25 @@ export default function HomePage() {
           </p>
         </section>
         
-        {/* Charger Selection */}
+        {/* Location Selection */}
         <section className="mb-8">
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            {t('selectCharger')}
+            {t('selectLocation')}
           </h2>
           <div className="grid gap-3 md:grid-cols-2">
-            {chargers.map(charger => (
-              <ChargerCard
-                key={charger.id}
-                charger={charger}
-                selected={selectedCharger?.id === charger.id}
-                onSelect={() => handleSelectCharger(charger)}
+            {locations.map(location => (
+              <LocationCard
+                key={location.id}
+                location={location}
+                selected={selectedLocation?.id === location.id}
+                onSelect={() => handleSelectLocation(location)}
               />
             ))}
           </div>
         </section>
         
-        {/* Date Picker - Only show when charger is selected */}
-        {selectedCharger && (
+        {/* Date Picker - Only show when location is selected */}
+        {selectedLocation && (
           <section className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
               {t('selectDate')}
@@ -183,8 +187,8 @@ export default function HomePage() {
           </section>
         )}
         
-        {/* Time Slots - Only show when charger and date are selected */}
-        {selectedCharger && (
+        {/* Time Slots - Only show when location and date are selected */}
+        {selectedLocation && (
           <section className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
               {t('selectTimeSlots')}
@@ -200,7 +204,7 @@ export default function HomePage() {
         {/* Reservation Summary - Desktop only inline version */}
         <div className="hidden md:block">
           <ReservationSummary
-            charger={selectedCharger}
+            location={selectedLocation}
             date={selectedDate}
             selectedSlots={selectedSlots}
             onConfirm={handleOpenConfirmation}
@@ -212,7 +216,7 @@ export default function HomePage() {
       {/* Reservation Summary - Mobile sticky bottom */}
       <div className="md:hidden">
         <ReservationSummary
-          charger={selectedCharger}
+          location={selectedLocation}
           date={selectedDate}
           selectedSlots={selectedSlots}
           onConfirm={handleOpenConfirmation}
@@ -221,12 +225,12 @@ export default function HomePage() {
       </div>
       
       {/* Confirmation Modal */}
-      {selectedCharger && (
+      {selectedLocation && (
         <ConfirmationModal
           isOpen={showConfirmation}
           onClose={() => setShowConfirmation(false)}
           onConfirm={handleConfirm}
-          charger={selectedCharger}
+          locationName={`${selectedLocation.city} | ${selectedLocation.name}`}
           date={formatDate(selectedDate)}
           timeRange={getTimeRange(selectedSlots)}
           duration={selectedSlots.length * 15}
@@ -248,7 +252,7 @@ export default function HomePage() {
       <SuccessModal
         isOpen={showSuccess}
         onClose={handleSuccessClose}
-        chargerName={successData.chargerName}
+        locationName={successData.locationName}
         date={successData.date}
         time={successData.time}
       />

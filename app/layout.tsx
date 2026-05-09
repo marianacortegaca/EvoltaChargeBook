@@ -11,8 +11,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'EVOLTA | Intenções de Carregamento',
-  description: 'Agende a sua intenção de carregamento de forma rápida e simples',
+  title: 'EVOLTA | Reservas de Carregamento',
+  description: 'Reserve o seu carregamento de veículo elétrico de forma rápida e simples',
   generator: 'v0.app',
 }
 

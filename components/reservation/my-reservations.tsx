@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Zap, Calendar, Clock, BatteryCharging, Trash2, Loader2 } from 'lucide-react'
+import { X, MapPin, Calendar, Clock, Trash2, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/contexts/language-context'
@@ -139,20 +139,13 @@ export function MyReservations({
                             'flex h-10 w-10 items-center justify-center rounded-xl',
                             reservation.status === 'confirmed' ? 'bg-gold/10' : 'bg-gray-light'
                           )}>
-                            {reservation.chargerName.includes('Ultra') ? (
-                              <Zap className={cn(
-                                'h-5 w-5',
-                                reservation.status === 'confirmed' ? 'text-gold' : 'text-muted-foreground'
-                              )} />
-                            ) : (
-                              <BatteryCharging className={cn(
-                                'h-5 w-5',
-                                reservation.status === 'confirmed' ? 'text-gold' : 'text-muted-foreground'
-                              )} />
-                            )}
+                            <MapPin className={cn(
+                              'h-5 w-5',
+                              reservation.status === 'confirmed' ? 'text-gold' : 'text-muted-foreground'
+                            )} />
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{reservation.chargerName}</p>
+                            <p className="font-medium text-foreground">{reservation.locationName}</p>
                             <p className="text-sm text-muted-foreground">
                               {reservation.vehiclePlate}
                               {isSuper && reservation.userId !== currentUserId && (

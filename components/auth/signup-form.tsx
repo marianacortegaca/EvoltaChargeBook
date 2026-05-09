@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/auth-context'
 import { useLanguage } from '@/contexts/language-context'
-import { Loader2, CheckCircle } from 'lucide-react'
+import { Loader2, Mail, ArrowLeft } from 'lucide-react'
 
 export function SignupForm() {
   const [name, setName] = useState('')
@@ -15,7 +16,7 @@ export function SignupForm() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false)
   const { signup, isLoading } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
@@ -23,7 +24,6 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setSuccess('')
 
     if (!name || !email || !password || !confirmPassword) {
       setError(t('fillAllFields') as string)
@@ -39,15 +39,59 @@ export function SignupForm() {
     
     if (result.success) {
       if (result.error) {
-        // Email confirmation required
-        setSuccess(result.error)
+        // Email confirmation required - show confirmation screen
+        setShowEmailConfirmation(true)
       } else {
-        // Auto-login successful
+        // Auto-login successful (email confirmation disabled in Supabase)
         router.push('/dashboard')
       }
     } else {
       setError(result.error || t('errorGeneric') as string)
     }
+  }
+
+  // Show email confirmation screen
+  if (showEmailConfirmation) {
+    return (
+      <div className="space-y-6 text-center">
+        {/* Email Icon */}
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gold/10">
+          <Mail className="h-10 w-10 text-gold" />
+        </div>
+
+        {/* Title */}
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground">
+            {t('verifyEmailTitle')}
+          </h2>
+          <p className="mt-2 text-muted-foreground">
+            {t('verifyEmailDescription')}
+          </p>
+        </div>
+
+        {/* Email Display */}
+        <div className="rounded-xl bg-muted/50 p-4">
+          <p className="text-sm text-muted-foreground">{t('emailSentTo')}</p>
+          <p className="font-medium text-foreground">{email}</p>
+        </div>
+
+        {/* Instructions */}
+        <div className="rounded-xl border border-border bg-background p-4 text-left">
+          <p className="text-sm text-muted-foreground">
+            {t('verifyEmailInstructions')}
+          </p>
+        </div>
+
+        {/* Back to Login Link */}
+        <Link 
+          href="/login"
+          className="inline-flex items-center gap-2 text-sm text-gold hover:text-gold-dark"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t('backToLogin')}
+        </Link>
+      </div>
+    )
   }
 
   return (
@@ -106,13 +150,6 @@ export function SignupForm() {
 
       {error && (
         <p className="text-sm text-destructive">{error}</p>
-      )}
-
-      {success && (
-        <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700">
-          <CheckCircle className="h-4 w-4" />
-          <p>{success}</p>
-        </div>
       )}
 
       <Button 

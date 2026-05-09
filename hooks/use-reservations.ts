@@ -7,8 +7,8 @@ import type { Reservation } from '@/lib/types'
 interface DbReservation {
   id: string
   user_id: string
-  charger_id: string
-  charger_name: string
+  charger_id: string // Maps to locationId in new schema
+  charger_name: string // Maps to locationName in new schema
   date: string
   slots: string[]
   user_name: string | null
@@ -21,8 +21,8 @@ function mapDbToReservation(db: DbReservation): Reservation {
   return {
     id: db.id,
     userId: db.user_id,
-    chargerId: db.charger_id,
-    chargerName: db.charger_name,
+    locationId: db.charger_id, // Database still uses charger_id column
+    locationName: db.charger_name, // Database still uses charger_name column
     date: db.date,
     slots: db.slots,
     userName: db.user_name || undefined,
@@ -64,8 +64,8 @@ export function useReservations() {
   // Create a new reservation
   const createReservation = useCallback(async (
     userId: string,
-    chargerId: string,
-    chargerName: string,
+    locationId: string,
+    locationName: string,
     date: string,
     slots: string[],
     userName: string,
@@ -75,8 +75,8 @@ export function useReservations() {
       .from('reservations')
       .insert({
         user_id: userId,
-        charger_id: chargerId,
-        charger_name: chargerName,
+        charger_id: locationId, // Database column still named charger_id
+        charger_name: locationName, // Database column still named charger_name
         date,
         slots,
         user_name: userName,

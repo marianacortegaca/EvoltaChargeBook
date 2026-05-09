@@ -1,17 +1,20 @@
 'use client'
 
-import { Check, Zap } from 'lucide-react'
+import { Check, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useLanguage } from '@/contexts/language-context'
 
 interface SuccessModalProps {
   isOpen: boolean
   onClose: () => void
-  chargerName: string
+  locationName: string
   date: string
   time: string
 }
 
-export function SuccessModal({ isOpen, onClose, chargerName, date, time }: SuccessModalProps) {
+export function SuccessModal({ isOpen, onClose, locationName, date, time }: SuccessModalProps) {
+  const { t } = useLanguage()
+  
   if (!isOpen) return null
   
   return (
@@ -22,16 +25,16 @@ export function SuccessModal({ isOpen, onClose, chargerName, date, time }: Succe
         </div>
         
         <h2 className="mb-2 text-2xl font-semibold text-foreground">
-          Reserva confirmada!
+          {t('reservationConfirmed')}
         </h2>
         <p className="mb-6 text-muted-foreground">
-          O seu carregamento foi reservado com sucesso.
+          {t('reservationSuccess')}
         </p>
         
         <div className="mb-8 rounded-2xl bg-gray-light p-4">
           <div className="mb-3 flex items-center justify-center gap-2">
-            <Zap className="h-5 w-5 text-gold" />
-            <span className="font-medium text-foreground">{chargerName}</span>
+            <MapPin className="h-5 w-5 text-gold" />
+            <span className="font-medium text-foreground">{locationName}</span>
           </div>
           <p className="text-sm text-muted-foreground">{date}</p>
           <p className="text-lg font-semibold text-foreground">{time}</p>
@@ -41,7 +44,7 @@ export function SuccessModal({ isOpen, onClose, chargerName, date, time }: Succe
           onClick={onClose}
           className="w-full rounded-xl bg-charcoal py-5 text-base font-semibold text-white hover:bg-charcoal/90"
         >
-          Fechar
+          {t('close')}
         </Button>
       </div>
     </div>

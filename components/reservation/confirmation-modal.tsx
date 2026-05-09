@@ -1,41 +1,35 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Zap, BatteryCharging, Calendar, Clock, Car, Loader2 } from 'lucide-react'
+import { X, MapPin, Calendar, Clock, Car, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import type { Charger } from '@/lib/types'
+import { useLanguage } from '@/contexts/language-context'
 
 interface ConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: (vehiclePlate: string) => Promise<void>
-  charger: Charger
+  locationName: string
   date: string
   timeRange: string
   duration: number
   isConfirming: boolean
 }
 
-const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
-const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-
-function formatFullDate(date: Date): string {
-  return `${dayNames[date.getDay()]}, ${date.getDate()} de ${monthNames[date.getMonth()]}`
-}
-
 export function ConfirmationModal({
   isOpen,
   onClose,
   onConfirm,
-  charger,
+  locationName,
   date,
   timeRange,
   duration,
   isConfirming,
 }: ConfirmationModalProps) {
+  const { t } = useLanguage()
   const [vehiclePlate, setVehiclePlate] = useState('')
   const [error, setError] = useState('')
 
@@ -44,7 +38,7 @@ export function ConfirmationModal({
     setError('')
 
     if (!vehiclePlate.trim()) {
-      setError('Por favor introduza a matrícula do veículo')
+      setError(t('fillAllFields') as string)
       return
     }
 
@@ -63,12 +57,15 @@ export function ConfirmationModal({
   if (!isOpen) return null
 
   const dateObj = new Date(date)
+  const days = t('days') as string[]
+  const months = t('months') as string[]
+  const formattedDate = `${days[dateObj.getDay()]}, ${dateObj.getDate()} ${months[dateObj.getMonth()]}`
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-charcoal/50 backdrop-blur-sm md:items-center">
       <div className="w-full max-w-md overflow-hidden rounded-t-3xl bg-background shadow-2xl md:rounded-3xl">
         <div className="flex items-center justify-between border-b border-border p-4">
-          <h2 className="text-lg font-semibold text-foreground">Confirmar Reserva</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('confirmReservationTitle')}</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -85,22 +82,17 @@ export function ConfirmationModal({
           <div className="mb-6 rounded-2xl border border-border bg-muted/30 p-4">
             <div className="mb-4 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10">
-                {charger.type === 'ultra-fast' ? (
-                  <Zap className="h-6 w-6 text-gold" />
-                ) : (
-                  <BatteryCharging className="h-6 w-6 text-gold" />
-                )}
+                <MapPin className="h-6 w-6 text-gold" />
               </div>
               <div>
-                <p className="font-semibold text-foreground">{charger.name}</p>
-                <p className="text-sm text-muted-foreground">{charger.power} kW</p>
+                <p className="font-semibold text-foreground">{locationName}</p>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-foreground">{formatFullDate(dateObj)}</span>
+                <span className="text-foreground">{formattedDate}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -115,12 +107,12 @@ export function ConfirmationModal({
             <div className="space-y-2">
               <Label htmlFor="vehiclePlate" className="flex items-center gap-2">
                 <Car className="h-4 w-4 text-muted-foreground" />
-                Matrícula do Veículo
+                {t('vehiclePlate')}
               </Label>
               <Input
                 id="vehiclePlate"
                 type="text"
-                placeholder="AA-00-BB"
+                placeholder={t('vehiclePlatePlaceholder') as string}
                 value={vehiclePlate}
                 onChange={(e) => setVehiclePlate(e.target.value.toUpperCase())}
                 disabled={isConfirming}
@@ -141,7 +133,7 @@ export function ConfirmationModal({
                 onClick={handleClose}
                 disabled={isConfirming}
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -151,10 +143,10 @@ export function ConfirmationModal({
                 {isConfirming ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    A confirmar...
+                    {t('loggingIn')}
                   </>
                 ) : (
-                  'Confirmar Reserva'
+                  t('confirmReservation')
                 )}
               </Button>
             </div>

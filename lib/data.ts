@@ -1,57 +1,62 @@
-import type { Charger, TimeSlot, Reservation } from './types'
+import type { Location, TimeSlot, Reservation, SLOT_MAX_CAPACITY } from './types'
 
-export const chargers: Charger[] = [
+export const locations: Location[] = [
   {
-    id: 'charger-1',
-    name: 'Ultra Fast Charger',
-    type: 'ultra-fast',
-    power: 150,
-    availableSlots: 2,
-    totalSlots: 2,
+    id: 'location-lisboa',
+    name: 'Prior Velho',
+    city: 'Lisboa',
+    available: true,
   },
   {
-    id: 'charger-2',
-    name: 'Fast Charger',
-    type: 'fast',
-    power: 60,
-    availableSlots: 2,
-    totalSlots: 2,
+    id: 'location-porto',
+    name: 'Porto',
+    city: 'Porto',
+    available: false,
+    comingSoon: true,
   },
 ]
 
+// Maximum capacity per slot
+const MAX_CAPACITY = 3
+
 // Generate time slots from 00:00 to 23:45 in 15-minute intervals
-// Checks against existing reservations to mark slots as unavailable
-export function generateTimeSlots(chargerId: string, date: string, reservations: Reservation[] = []): TimeSlot[] {
+// Each slot can have up to 3 reservations
+export function generateTimeSlots(locationId: string, date: string, reservations: Reservation[] = []): TimeSlot[] {
   const slots: TimeSlot[] = []
   
-  // Find all reservations for this charger and date
+  // Find all reservations for this location and date
   const dayReservations = (reservations || []).filter(
-    res => res.chargerId === chargerId && res.date === date && res.status !== 'cancelled'
+    res => res.locationId === locationId && res.date === date && res.status !== 'cancelled'
   )
   
-  // Create a map of reserved slots with user info
-  const reservedSlots = new Map<string, { userName: string; vehiclePlate: string }>()
+  // Create a map of reserved slots with all user info
+  const slotReservationsMap = new Map<string, Array<{ userName: string; vehiclePlate: string }>>()
   dayReservations.forEach(res => {
     res.slots.forEach(slot => {
-      reservedSlots.set(slot, {
+      const existing = slotReservationsMap.get(slot) || []
+      existing.push({
         userName: res.userName || 'Utilizador',
         vehiclePlate: res.vehiclePlate || '',
       })
+      slotReservationsMap.set(slot, existing)
     })
   })
   
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-      const slotId = `${chargerId}-${date}-${time}`
-      const reservedInfo = reservedSlots.get(time)
+      const slotId = `${locationId}-${date}-${time}`
+      const slotReservations = slotReservationsMap.get(time) || []
+      const currentCount = slotReservations.length
       
       slots.push({
         id: slotId,
         time,
-        available: !reservedInfo,
-        chargerId,
-        reservedBy: reservedInfo ? `${reservedInfo.userName} (${reservedInfo.vehiclePlate})` : undefined,
+        available: currentCount < MAX_CAPACITY,
+        locationId,
+        currentReservations: currentCount,
+        maxCapacity: MAX_CAPACITY,
+        reservations: slotReservations,
       })
     }
   }
