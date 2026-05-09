@@ -1,12 +1,12 @@
 export const translations = {
   pt: {
     // Header
-    myReservations: 'Minhas Marcações',
+    myReservations: 'Os meus agendamentos',
     logout: 'Terminar Sessão',
     
     // Hero
     heroTitle: 'Indique a sua intenção de carregamento',
-    heroDescription: 'Selecione o dia e hora.',
+    heroDescription: 'Selecione o local, o dia e hora. ATENÇÃO: O registo de intenção ajuda a prever os horários de maior utilização, mas não garante a reserva da slot.',
     
     // Auth
     login: 'Entrar',
@@ -103,7 +103,7 @@ export const translations = {
     
     // Hero
     heroTitle: 'Book your intention to charge.',
-    heroDescription: 'Choose the location, day and time.',
+    heroDescription: 'Choose the location, day and time. ATTENTION: Registering an intention helps predict peak usage periods, but does not guarantee slot reservation.',
     
     // Auth
     login: 'Login',
