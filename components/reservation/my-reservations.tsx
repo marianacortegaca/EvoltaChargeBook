@@ -146,12 +146,9 @@ export function MyReservations({
                           </div>
                           <div>
                             <p className="font-medium text-foreground">{reservation.locationName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {reservation.vehiclePlate}
-                              {isSuper && reservation.userId !== currentUserId && (
-                                <span className="ml-2 text-xs text-gold">({reservation.userName})</span>
-                              )}
-                            </p>
+                            {isSuper && reservation.userId !== currentUserId && (
+                              <p className="text-sm text-gold">{reservation.userName}</p>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

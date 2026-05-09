@@ -98,8 +98,8 @@ export default function HomePage() {
     }
   }, [selectedLocation, selectedSlots])
   
-  // Handle final reservation confirmation with vehicle plate
-  const handleConfirm = useCallback(async (vehiclePlate: string) => {
+  // Handle final reservation confirmation
+  const handleConfirm = useCallback(async () => {
     if (!selectedLocation || selectedSlots.length === 0 || !user) return
     
     setIsConfirming(true)
@@ -112,8 +112,7 @@ export default function HomePage() {
       locationDisplayName,
       formatDate(selectedDate),
       selectedSlots,
-      user.name,
-      vehiclePlate
+      user.name
     )
     
     if (result.success) {

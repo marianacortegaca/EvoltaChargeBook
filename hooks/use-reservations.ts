@@ -68,8 +68,7 @@ export function useReservations() {
     locationName: string,
     date: string,
     slots: string[],
-    userName: string,
-    vehiclePlate: string
+    userName: string
   ): Promise<{ success: boolean; error?: string; reservation?: Reservation }> => {
     const { data, error: insertError } = await supabase
       .from('reservations')
@@ -80,7 +79,6 @@ export function useReservations() {
         date,
         slots,
         user_name: userName,
-        vehicle_plate: vehiclePlate,
         status: 'confirmed',
       })
       .select()

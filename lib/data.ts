@@ -30,13 +30,12 @@ export function generateTimeSlots(locationId: string, date: string, reservations
   )
   
   // Create a map of reserved slots with all user info
-  const slotReservationsMap = new Map<string, Array<{ userName: string; vehiclePlate: string }>>()
+  const slotReservationsMap = new Map<string, Array<{ userName: string }>>()
   dayReservations.forEach(res => {
     res.slots.forEach(slot => {
       const existing = slotReservationsMap.get(slot) || []
       existing.push({
         userName: res.userName || 'Utilizador',
-        vehiclePlate: res.vehiclePlate || '',
       })
       slotReservationsMap.set(slot, existing)
     })

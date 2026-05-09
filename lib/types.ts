@@ -31,7 +31,7 @@ export interface TimeSlot {
   locationId?: string
   currentReservations: number // Number of current reservations (0-3)
   maxCapacity: number // Maximum capacity (3)
-  reservations: Array<{ userName: string; vehiclePlate: string }> // List of all reservations for this slot
+  reservations: Array<{ userName: string }> // List of all reservations for this slot
 }
 
 export interface Reservation {
@@ -42,7 +42,6 @@ export interface Reservation {
   date: string
   slots: string[]
   userName?: string
-  vehiclePlate?: string
   status: 'pending' | 'confirmed' | 'cancelled'
   createdAt: string
 }

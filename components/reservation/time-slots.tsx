@@ -98,7 +98,7 @@ export function TimeSlots({ slots, selectedSlots, onToggleSlot }: TimeSlotsProps
             <div className="space-y-1">
               {slot.reservations.map((res, idx) => (
                 <p key={idx} className="text-sm">
-                  {t('plannedBy')}: {res.userName} ({res.vehiclePlate})
+                  {t('plannedBy')}: {res.userName}
                 </p>
               ))}
             </div>

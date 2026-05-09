@@ -1,17 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { X, MapPin, Calendar, Clock, Car, Loader2 } from 'lucide-react'
+import { X, MapPin, Calendar, Clock, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
 import { useLanguage } from '@/contexts/language-context'
 
 interface ConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (vehiclePlate: string) => Promise<void>
+  onConfirm: () => Promise<void>
   locationName: string
   date: string
   timeRange: string
@@ -30,26 +26,14 @@ export function ConfirmationModal({
   isConfirming,
 }: ConfirmationModalProps) {
   const { t } = useLanguage()
-  const [vehiclePlate, setVehiclePlate] = useState('')
-  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-
-    if (!vehiclePlate.trim()) {
-      setError(t('fillAllFields') as string)
-      return
-    }
-
-    await onConfirm(vehiclePlate.trim().toUpperCase())
-    setVehiclePlate('')
+    await onConfirm()
   }
 
   const handleClose = () => {
     if (!isConfirming) {
-      setVehiclePlate('')
-      setError('')
       onClose()
     }
   }
@@ -102,54 +86,31 @@ export function ConfirmationModal({
             </div>
           </div>
 
-          {/* Vehicle Plate Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="vehiclePlate" className="flex items-center gap-2">
-                <Car className="h-4 w-4 text-muted-foreground" />
-                {t('vehiclePlate')}
-              </Label>
-              <Input
-                id="vehiclePlate"
-                type="text"
-                placeholder={t('vehiclePlatePlaceholder') as string}
-                value={vehiclePlate}
-                onChange={(e) => setVehiclePlate(e.target.value.toUpperCase())}
-                disabled={isConfirming}
-                className={cn(
-                  'text-center text-lg font-medium tracking-wider uppercase',
-                  error && 'border-destructive'
-                )}
-                maxLength={10}
-              />
-              {error && <p className="text-sm text-destructive">{error}</p>}
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={handleClose}
-                disabled={isConfirming}
-              >
-                {t('cancel')}
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1 bg-gold text-charcoal hover:bg-gold-dark"
-                disabled={isConfirming}
-              >
-                {isConfirming ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('loggingIn')}
-                  </>
-                ) : (
-                  t('confirmReservation')
-                )}
-              </Button>
-            </div>
+          {/* Confirmation Buttons */}
+          <form onSubmit={handleSubmit} className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={handleClose}
+              disabled={isConfirming}
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 bg-gold text-charcoal hover:bg-gold-dark"
+              disabled={isConfirming}
+            >
+              {isConfirming ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('confirming')}
+                </>
+              ) : (
+                t('confirmReservation')
+              )}
+            </Button>
           </form>
         </div>
       </div>

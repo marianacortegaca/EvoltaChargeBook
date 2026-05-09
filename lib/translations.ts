@@ -73,11 +73,10 @@ export const translations = {
     
     // Confirmation Modal
     confirmReservationTitle: 'Confirmar Marcação',
-    vehiclePlate: 'Matrícula do Veículo',
-    vehiclePlatePlaceholder: 'Ex: 00-AA-00',
     yourName: 'Seu Nome',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
+    confirming: 'A confirmar...',
     
     // Success Modal
     reservationConfirmed: 'Marcação Confirmada!',
@@ -183,11 +182,10 @@ export const translations = {
     
     // Confirmation Modal
     confirmReservationTitle: 'Confirm Intention to Charge',
-    vehiclePlate: 'Vehicle Plate',
-    vehiclePlatePlaceholder: 'Ex: ABC-1234',
     yourName: 'Your Name',
     cancel: 'Cancel',
     confirm: 'Confirm',
+    confirming: 'Confirming...',
     
     // Success Modal
     reservationConfirmed: 'Intention to Charge Confirmed!',
