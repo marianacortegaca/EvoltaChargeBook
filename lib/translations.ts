@@ -1,12 +1,12 @@
 export const translations = {
   pt: {
     // Header
-    myReservations: 'Minhas Reservas',
+    myReservations: 'Minhas Marcações',
     logout: 'Terminar Sessão',
     
     // Hero
-    heroTitle: 'Reserve o seu carregamento',
-    heroDescription: 'Escolha o carregador, dia e hora.',
+    heroTitle: 'Indique a sua intenção de carregamento',
+    heroDescription: 'Selecione o dia e hora.',
     
     // Auth
     login: 'Entrar',
@@ -17,9 +17,9 @@ export const translations = {
     confirmPassword: 'Confirmar Password',
     name: 'Nome',
     loginTitle: 'Bem-vindo de volta',
-    loginDescription: 'Entre na sua conta para fazer reservas',
+    loginDescription: 'Entre na sua conta para indicar a sua intenção de carregamento',
     signupTitle: 'Criar uma conta',
-    signupDescription: 'Registe-se para começar a reservar',
+    signupDescription: 'Registe-se para começar a usar',
     forgotPasswordTitle: 'Recuperar password',
     forgotPasswordDescription: 'Introduza o seu email para receber instruções',
     sendRecoveryEmail: 'Enviar email de recuperação',
@@ -34,13 +34,13 @@ export const translations = {
     creatingAccount: 'A criar conta...',
     
     // Dashboard
-    selectCharger: 'Selecione o carregador',
+    selectCharger: 'Selecione a localização',
     selectDate: 'Selecione a data',
     selectTimeSlots: 'Selecione os horários',
     available: 'Disponível',
     availableSlots: 'disponíveis',
     unavailable: 'Indisponível',
-    full: 'Cheio',
+    full: 'Completo',
     
     // Time periods
     dawn: 'Madrugada',
@@ -49,17 +49,17 @@ export const translations = {
     evening: 'Noite',
     
     // Reservation
-    reservationSummary: 'Resumo da Reserva',
+    reservationSummary: 'Resumo da Marcação',
     charger: 'Carregador',
     date: 'Data',
     time: 'Horário',
     duration: 'Duração',
     minutes: 'minutos',
-    confirmReservation: 'Confirmar Reserva',
+    confirmReservation: 'Confirmar Marcação',
     selectSlotsFirst: 'Selecione horários primeiro',
     
     // Confirmation Modal
-    confirmReservationTitle: 'Confirmar Reserva',
+    confirmReservationTitle: 'Confirmar Marcação',
     vehiclePlate: 'Matrícula do Veículo',
     vehiclePlatePlaceholder: 'Ex: 00-AA-00',
     yourName: 'Seu Nome',
@@ -67,22 +67,22 @@ export const translations = {
     confirm: 'Confirmar',
     
     // Success Modal
-    reservationConfirmed: 'Reserva Confirmada!',
-    reservationSuccess: 'A sua reserva foi confirmada com sucesso.',
+    reservationConfirmed: 'Marcação Confirmada!',
+    reservationSuccess: 'A sua marcação foi confirmada com sucesso.',
     close: 'Fechar',
     
     // My Reservations
-    myReservationsTitle: 'Minhas Reservas',
-    noReservations: 'Sem reservas',
-    noReservationsDescription: 'Ainda não tem reservas. Selecione um carregador e horário para começar.',
+    myReservationsTitle: 'Minhas Marcações ',
+    noReservations: 'Sem planeamentos',
+    noReservationsDescription: 'Ainda não tem marcações planeadas. Selecione uma localização, data e horário para começar.',
     confirmed: 'Confirmada',
     pending: 'Pendente',
     cancelled: 'Cancelada',
-    deleteReservation: 'Eliminar Reserva',
-    deleteConfirmation: 'Tem a certeza que deseja eliminar esta reserva?',
+    deleteReservation: 'Eliminar marcação',
+    deleteConfirmation: 'Tem a certeza que deseja eliminar esta marcação?',
     
     // Tooltip
-    reservedBy: 'Reservado por',
+    reservedBy: 'Planeado por',
     
     // Months
     months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
@@ -98,12 +98,12 @@ export const translations = {
   },
   en: {
     // Header
-    myReservations: 'My Reservations',
+    myReservations: 'My Planning',
     logout: 'Logout',
     
     // Hero
-    heroTitle: 'Book your charging',
-    heroDescription: 'Choose the charger, day and time.',
+    heroTitle: 'Book your intention to charge.',
+    heroDescription: 'Choose the location, day and time.',
     
     // Auth
     login: 'Login',
@@ -114,7 +114,7 @@ export const translations = {
     confirmPassword: 'Confirm Password',
     name: 'Name',
     loginTitle: 'Welcome back',
-    loginDescription: 'Sign in to your account to make reservations',
+    loginDescription: 'Sign in to your account to plan',
     signupTitle: 'Create an account',
     signupDescription: 'Register to start booking',
     forgotPasswordTitle: 'Reset password',
@@ -152,11 +152,11 @@ export const translations = {
     time: 'Time',
     duration: 'Duration',
     minutes: 'minutes',
-    confirmReservation: 'Confirm Reservation',
+    confirmReservation: 'Confirm Intention to Charge',
     selectSlotsFirst: 'Select time slots first',
     
     // Confirmation Modal
-    confirmReservationTitle: 'Confirm Reservation',
+    confirmReservationTitle: 'Confirm Intention to Charge',
     vehiclePlate: 'Vehicle Plate',
     vehiclePlatePlaceholder: 'Ex: ABC-1234',
     yourName: 'Your Name',
@@ -164,22 +164,22 @@ export const translations = {
     confirm: 'Confirm',
     
     // Success Modal
-    reservationConfirmed: 'Reservation Confirmed!',
-    reservationSuccess: 'Your reservation has been confirmed successfully.',
+    reservationConfirmed: 'Intention to Charge Confirmed!',
+    reservationSuccess: 'Your intention to charge has been confirmed successfully.',
     close: 'Close',
     
     // My Reservations
-    myReservationsTitle: 'My Reservations',
-    noReservations: 'No reservations',
-    noReservationsDescription: "You don't have any reservations yet. Select a charger and time slot to get started.",
+    myReservationsTitle: 'My Intentions to Charge',
+    noReservations: 'Nothing scheduled',
+    noReservationsDescription: "You don't have any intentions to charge yet. Select a location and time slot to get started.",    
     confirmed: 'Confirmed',
     pending: 'Pending',
     cancelled: 'Cancelled',
-    deleteReservation: 'Delete Reservation',
-    deleteConfirmation: 'Are you sure you want to delete this reservation?',
+    deleteReservation: 'Delete Intention to Charge',
+    deleteConfirmation: 'Are you sure you want to delete this?',
     
     // Tooltip
-    reservedBy: 'Reserved by',
+    reservedBy: 'Planned by',
     
     // Months
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
